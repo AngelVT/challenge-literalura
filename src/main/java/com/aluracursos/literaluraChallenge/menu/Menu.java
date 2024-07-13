@@ -1,5 +1,6 @@
 package com.aluracursos.literaluraChallenge.menu;
 
+import com.aluracursos.literaluraChallenge.controllers.MenuController;
 import com.aluracursos.literaluraChallenge.service.APIConsumer;
 
 import java.io.UnsupportedEncodingException;
@@ -36,19 +37,19 @@ public class Menu {
 
             switch (option) {
                 case 1:
-                    getLibroFromAPI();
+                    MenuController.getLibroFromAPI();
                     break;
                 case 2:
-                    System.out.println("\nConsultando libros en DB ...\n");
+                    MenuController.getLibros();
                     break;
                 case 3:
-                    System.out.println("\nConsultando autores en DB ...\n");
+                    MenuController.getAutores();
                     break;
                 case 4:
-                    System.out.println("\nConsultando autores vivos en DB ...\n");
+                    MenuController.getAutoresVivos();
                     break;
                 case 5:
-                    System.out.println("\nConsultando libros por idioma en DB ...\n");
+                    MenuController.getLibrosIdioma();
                     break;
                 case 0:
                     isRunning = false;
@@ -58,19 +59,5 @@ public class Menu {
                     break;
             }
         }
-    }
-
-    public static void getLibroFromAPI() throws UnsupportedEncodingException {
-        String urlAPI = "https://gutendex.com/books/";
-        System.out.println("Intoduce el nombre del libro o autor");
-        String busqueda = userInput.nextLine();
-
-        busqueda = URLEncoder.encode(busqueda, StandardCharsets.UTF_8);
-
-        System.out.println("\nBuscando ...\n");
-
-        var response = APIConsumer.getDataFrom(urlAPI + "?search=" + busqueda);
-
-        System.out.println(response);
     }
 }
