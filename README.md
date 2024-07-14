@@ -1,6 +1,8 @@
 <h1 align="center"> Challenge Literalura </h1>
 
 ![Badge en Finalizado](https://img.shields.io/badge/STATUS-COMPLETADO-green)
+![Badge Java](https://img.shields.io/badge/VERSION_JAVA-17-blue)
+![Badge Java](https://img.shields.io/badge/VERSION_PROYECTO-1.1-orange)
 
 Este proyecto permite registrar y gestionar libros y autores en una base de datos Postgres SQL utilizando Spring Boot y JPA. Se ha integrado con la API de Gutendex para obtener información de libros y sus autores.
 
