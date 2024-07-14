@@ -2,16 +2,14 @@ package com.aluracursos.literaluraChallenge.controllers;
 
 import com.aluracursos.literaluraChallenge.models.Autor;
 import com.aluracursos.literaluraChallenge.models.Libro;
-import com.aluracursos.literaluraChallenge.models.dto.AutorFromResponse;
 import com.aluracursos.literaluraChallenge.models.dto.BookResultados;
-import com.aluracursos.literaluraChallenge.models.dto.LibrosFromResponse;
 import com.aluracursos.literaluraChallenge.service.repository.AutorRepository;
 import com.aluracursos.literaluraChallenge.service.repository.LibroRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class DBcontroller {
@@ -24,27 +22,50 @@ public class DBcontroller {
         this.autorRepository = autorRepository;
     }
 
+    @Transactional
     public static void guardar(BookResultados resultados) {
-        var libro = new Libro(resultados.books().get(0));
-        var autor = new Autor(resultados.books().get(0).autores().get(0));
+        var libroReq = resultados.books().get(0);
+        var autorReq = resultados.books().get(0).autores().get(0);
 
-        if(!libroRepository.findByTitulo(libro.getTitulo()).isEmpty()) {
-            System.out.println("\nEste Libro ya existe\n");
+        var libroDB = libroRepository.findByTitulo(libroReq.titulo());
+        var autorDB = autorRepository.findByNombre(autorReq.nombre());
+
+        System.out.println("xd");
+        System.out.println(resultados.books().get(0).idiomas());
+
+        if (!libroDB.isEmpty() && !autorDB.isEmpty()) {
+            System.out.println("\nEl libro ya existe\n");
             return;
         }
 
-        libro.setAutores(autor);
-        autor.setLibro(libro);
+        if (!autorDB.isEmpty()) {
+            var autor = autorDB.get(0);
 
-        libroRepository.save(libro);
-        autorRepository.save(autor);
+            for (String i : resultados.books().get(0).idiomas())  {
+                var libro = new Libro(libroReq, i);
+                autor.setLibro(libro);
+                libro.setAutores(autor);
+                libroRepository.save(libro);
 
-        System.out.println("Libro guardado");
-        System.out.println(libro);
+                showSavedBook(libro);
+            }
+        } else {
+            var autor = new Autor(autorReq);
+
+            autorRepository.save(autor);
+            for (String i : resultados.books().get(0).idiomas())  {
+                var libro = new Libro(libroReq, i);
+                libro.setAutores(autor);
+                autor.setLibro(libro);
+                libroRepository.save(libro);
+
+                showSavedBook(libro);
+            }
+        }
     }
 
     public static List<Autor> getAutores() {
-        return autorRepository.findAutores();
+        return autorRepository.findAll();
     }
 
     public static List<Libro> getLibros() {
@@ -57,5 +78,14 @@ public class DBcontroller {
 
     public static List<Libro> getLibrosByIdioma(String idioma) {
         return libroRepository.findByIdioma(idioma);
+    }
+
+    public static void showSavedBook(Libro libro) {
+        System.out.println("\nLibro guardado\n");
+        System.out.println(libro);
+    }
+
+    public static List<Autor> searchAutoresByName(String nombre) {
+        return autorRepository.findByNombreContainingIgnoreCase(nombre);
     }
 }

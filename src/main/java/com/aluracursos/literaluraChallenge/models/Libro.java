@@ -12,14 +12,16 @@ public class Libro {
     String titulo;
     String idioma;
     Double descargas;
-    @OneToOne(mappedBy = "libro", cascade = CascadeType.ALL)
-    Autor autores;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "autor_id", referencedColumnName = "id")
+    private Autor autor;
 
     public Libro() {}
 
-    public Libro(LibrosFromResponse libroResultado) {
+    public Libro(LibrosFromResponse libroResultado, String idioma) {
         this.titulo = libroResultado.titulo();
-        this.idioma = libroResultado.idiomas().get(0);
+        this.idioma = idioma;
         this.descargas = Double.valueOf(libroResultado.descargas());
     }
 
@@ -35,12 +37,16 @@ public class Libro {
         return idioma;
     }
 
+    public void setIdioma(String idioma) {
+        this.idioma = idioma;
+    }
+
     public Double getDescargas() {
         return descargas;
     }
 
     public void setAutores(Autor autores) {
-        this.autores = autores;
+        this.autor = autores;
     }
 
     @Override
@@ -49,8 +55,8 @@ public class Libro {
                 "   Titulo: " + titulo + "\n" +
                 "   Idioma: " + idioma + "\n" +
                 "   Autor: " +
-                autores.getNombre() + "\n" +
-                "          " + autores.getAnoNacimiento() + " - " + autores.getAnoMuerte() + "\n" +
+                autor.getNombre() + "\n" +
+                "          " + autor.getAnoNacimiento() + " - " + autor.getAnoMuerte() + "\n" +
                 "   Descargas: " + descargas + "\n" +
                 "+-+-+-+-+-+-+-+-+-+-   *   -+-+-+-+-+-+-+-+-+-+\n" ;
     }

@@ -23,6 +23,8 @@ public class Menu {
                 |     3.- Listar autores registrados                |
                 |     4.- Listar autores vivos de un año especifico |
                 |     5.- Listar libros por idioma                  |
+                |     6.- Buscar Autores por nombre                 |
+                |     7.- VerTop 10 libros mas descargados          |
                 |     0.- Salir                                     |
                 *---------------------------------------------------*""";
         while (isRunning) {
@@ -50,6 +52,13 @@ public class Menu {
                     break;
                 case 5:
                     MenuController.getLibrosIdioma();
+                    break;
+
+                case 6:
+                    MenuController.getAutoresPorNombre();
+                    break;
+                case 7:
+                    MenuController.getTop10Libros();
                     break;
                 case 0:
                     isRunning = false;

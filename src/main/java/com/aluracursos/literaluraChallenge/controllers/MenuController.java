@@ -1,5 +1,7 @@
 package com.aluracursos.literaluraChallenge.controllers;
 
+import com.aluracursos.literaluraChallenge.models.Autor;
+import com.aluracursos.literaluraChallenge.models.Libro;
 import com.aluracursos.literaluraChallenge.models.dto.BookResultados;
 import com.aluracursos.literaluraChallenge.service.APIConsumer;
 import com.aluracursos.literaluraChallenge.service.JSONToClass;
@@ -7,6 +9,9 @@ import com.aluracursos.literaluraChallenge.service.JSONToClass;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuController {
@@ -59,8 +64,15 @@ public class MenuController {
 
     public static void getAutoresVivos() {
         System.out.println("Intoduce año deseado: ");
-        Integer year = userInput.nextInt();
-        userInput.nextLine();
+
+        Integer year;
+        try {
+            year = userInput.nextInt();
+            userInput.nextLine();
+        } catch (Exception e) {
+            System.out.println("\nSolo puedes introducir numeros para la busqueda\n");
+            return;
+        }
         var autoresVivos = DBcontroller.getAutoresVivos(year);
 
         if (autoresVivos.isEmpty()) {
@@ -77,10 +89,42 @@ public class MenuController {
         var librosIdioma = DBcontroller.getLibrosByIdioma(idioma);
 
         if (librosIdioma.isEmpty()) {
-            System.out.println("\nNo hay libros registarados con el idioma" + idioma +"\n");
+            System.out.println("\nNo hay libros registarados con el idioma \"" + idioma +"\"\n");
             return;
         }
 
         librosIdioma.forEach(System.out::println);
+    }
+
+    public static void getTop10Libros() {
+        var libros = DBcontroller.getLibros();
+
+        if (libros.isEmpty()) {
+            System.out.println("\nNo hay libros registrados\n");
+            return;
+        }
+        System.out.println("""
+                *------------------*
+                |   Top 10 libros  |
+                *------------------*
+                """);
+        libros.stream()
+                .sorted(Comparator.comparing(Libro::getDescargas).reversed())
+                .limit(10)
+                .toList().forEach(System.out::println);
+    }
+
+    public static void getAutoresPorNombre() {
+        System.out.println("Intoduce el nombre del autor: ");
+        String busqueda = userInput.nextLine();
+
+        var autores = DBcontroller.searchAutoresByName(busqueda);
+
+        if (autores.isEmpty()) {
+            System.out.println("\nNo hay resultados que concuerden con tu busqueda\n");
+            return;
+        }
+
+        autores.forEach(System.out::println);
     }
 }

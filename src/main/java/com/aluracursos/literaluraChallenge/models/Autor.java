@@ -3,6 +3,9 @@ package com.aluracursos.literaluraChallenge.models;
 import com.aluracursos.literaluraChallenge.models.dto.AutorFromResponse;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "autores")
 public class Autor {
@@ -12,9 +15,9 @@ public class Autor {
     String nombre;
     Integer anoNacimiento;
     Integer anoMuerte;
-    @OneToOne
-    @JoinColumn(name = "libro_id", referencedColumnName = "id")
-    Libro libro;
+
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Libro> libros = new ArrayList<>();
 
     public Autor() {}
 
@@ -41,7 +44,7 @@ public class Autor {
     }
 
     public void setLibro(Libro libro) {
-        this.libro = libro;
+        this.libros.add(libro);
     }
 
     @Override

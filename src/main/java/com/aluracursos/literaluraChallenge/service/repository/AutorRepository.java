@@ -9,17 +9,14 @@ import java.util.List;
 
 @Component
 public interface AutorRepository extends JpaRepository<Autor, Long> {
-    @Query("""
-    SELECT a FROM Autor a 
-    WHERE a.id IN (
-        SELECT MIN(a2.id) FROM Autor a2 
-        GROUP BY a2.nombre, a2.anoNacimiento, a2.anoMuerte
-    )""")
-    List<Autor> findAutores();
+    List<Autor> findByNombre(String nombre);
 
-    @Query("SELECT DISTINCT a FROM Autor a " +
-            "WHERE :year BETWEEN a.anoNacimiento AND a.anoMuerte " +
-            "AND a.id IN (SELECT MIN(a2.id) FROM Autor a2 " +
-            "GROUP BY a2.nombre, a2.anoNacimiento, a2.anoMuerte)")
+    @Query("""
+            SELECT a FROM Autor a 
+            WHERE :year BETWEEN a.anoNacimiento AND a.anoMuerte
+            """)
     List<Autor> findAutoresVivos(Integer year);
+
+    List<Autor> findByNombreContainingIgnoreCase(String nombre);
+
 }
